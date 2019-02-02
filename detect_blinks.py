@@ -14,6 +14,9 @@ import time
 import dlib
 import cv2
 import subprocess
+import pandas as pd
+import matplotlib.pyplot as plt
+import level3
 
 def eye_aspect_ratio(eye):
 	# compute the euclidean distances between the two sets of
@@ -87,7 +90,7 @@ while ret:
 	ret,frame = vs.read()
 	frame = imutils.resize(frame, width=450)
 	gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-	cv2.imshow('frame',frame)
+	# cv2.imshow('frame',frame)
 
 	# detect faces in the grayscale frame
 	rects = detector(gray, 0)
@@ -121,7 +124,7 @@ while ret:
 		# threshold, and if so, increment the blink frame counter
 		elpased_time = time.time()-start_time
 		elpased_time = round(elpased_time)
-		if elpased_time==20:
+		if elpased_time==200000:
 			TOTAL=0
 			subprocess.Popen(['notify-send', "hello world"])
 		
@@ -145,6 +148,7 @@ while ret:
 			cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
 		cv2.putText(frame, "EAR: {:.2f}".format(ear), (300, 30),
 			cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+
  
 	# show the frame
 	cv2.imshow("Frame", frame)
@@ -153,7 +157,10 @@ while ret:
 	# if the `q` key was pressed, break from the loop
 	if key == ord("q"):
 		break
-
+	if TOTAL>=15:
+		level3.lookAway(detector,predictor,vs)
+		vs = cv2.VideoCapture(0)
+		TOTAL=0
 # do a bit of cleanup
 vs.release()
 cv2.destroyAllWindows()

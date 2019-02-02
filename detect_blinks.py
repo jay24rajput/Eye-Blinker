@@ -14,11 +14,15 @@ import time
 import dlib
 import cv2
 import subprocess
-import pandas as pd
-import matplotlib.pyplot as plt
-import level3
-
+elapsed_time_values = set()
+wow_flag=0
+wow_flag2=0
+wow_flag3=0
+wow_flag4=0
+problems = [0,0,0,0]
+blinks=[0,0,0,0]
 def eye_aspect_ratio(eye):
+
 	# compute the euclidean distances between the two sets of
 	# vertical eye landmarks (x, y)-coordinates
 	A = dist.euclidean(eye[1], eye[5])
@@ -90,7 +94,7 @@ while ret:
 	ret,frame = vs.read()
 	frame = imutils.resize(frame, width=450)
 	gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-	# cv2.imshow('frame',frame)
+	cv2.imshow('frame',frame)
 
 	# detect faces in the grayscale frame
 	rects = detector(gray, 0)
@@ -122,16 +126,115 @@ while ret:
 
 		# check to see if the eye aspect ratio is below the blink
 		# threshold, and if so, increment the blink frame counter
-		elpased_time = time.time()-start_time
-		elpased_time = round(elpased_time)
-		if elpased_time==200000:
+		#while(USER DOES NOT PRESS STOP)
+		elapsed_time = time.time()-start_time
+		elapsed_time = round(elapsed_time)
+		
+		elapsed_time=elapsed_time%60
+		
+		elapsed_time_values.add(elapsed_time)
+		print(elapsed_time)
+		
+		
+
+		if 15 in elapsed_time_values and wow_flag==0:
+			blinks[0]=TOTAL
+			print("the array is",blinks)
+			print("Total is",blinks[0])
+			if(TOTAL<5):
+				problems[0]=1
+				print("yo")
+
+			wow_flag=1
+			wow_flag4=0
+			
+						
+				
+        
+		elif 30 in elapsed_time_values and wow_flag2==0:
+			blinks[1]=TOTAL-blinks[0]
+			print("the array is",blinks)
+			print("total is",TOTAL-blinks[0])
+			if(TOTAL-blinks[0]<5):
+				problems[1]=1
+				print("YO1")
+			wow_flag2=1
+				
+			
+			
+
+		elif 45 in elapsed_time_values and wow_flag3==0:
+			blinks[2]=TOTAL-(blinks[0]+blinks[1])
+			print("the array is",blinks)
+			print("total is",TOTAL-(blinks[0]+blinks[1]))
+			if(TOTAL-(blinks[0]+blinks[1])<5):
+				problems[2]=1
+				print("Yo3")
+			wow_flag3=1
+			
+				
+			
+
+		elif 0 in elapsed_time_values and wow_flag4==0:
+			blinks[3]=TOTAL-(blinks[0]+blinks[1]+blinks[2])
+			print("the array is",blinks)
+			print("total is",TOTAL-(blinks[0]+blinks[1]+blinks[2]))
+			if(TOTAL-(blinks[0]+blinks[1]+blinks[2])<5):
+				problems[3]=1
 			TOTAL=0
-			subprocess.Popen(['notify-send', "hello world"])
+			
+			elapsed_time=0
+			flag1=0
+			flag2=0
+			wow_flag4=1
+			count=0
+			print(problems)
+			
+			for i in range(0,len(problems)):
+				if problems[i]==1:
+					count+=1
+			if count == 4:
+				print("level 3 warning")
+				#level 3 code
+				subprocess.Popen(['notify-send',"Level 3 Warning"])
+				flag1=1
+			if flag1==0:
+				for i in range(0,len(problems)-2):
+					if problems[i]==1 and problems[i+1]==1 and problems[i+2] == 1:
+						print("Level 2 warning")
+						#level 2 code
+						subprocess.Popen(['notify-send',"Level 2 Warning"])
+						flag2=1
+			if flag1==0 and flag2==0:			
+				for i in range(0,len(problems)-1):
+					if problems[i]==1 and problems[i+1]==1:
+						print("Level 1 warning")		
+						#level 1 code
+						subprocess.Popen(['notify-send',"Level 1 Warning"])
+			wow_flag=0
+			wow_flag2=0
+			wow_flag3=0
+			blinks = [0,0,0,0]
+			problems = [0,0,0,0]
+
+
+			
+		if 0 in elapsed_time_values:
+			elapsed_time_values.remove(0)
+		if 15 in elapsed_time_values:
+			elapsed_time_values.remove(15)
+		if 30 in elapsed_time_values:
+			elapsed_time_values.remove(30)
+		if 45 in elapsed_time_values:
+			elapsed_time_values.remove(45)
+
+		
+			
 		
 		if ear < EYE_AR_THRESH:
 			COUNTER += 1
 
-		# otherwise, the eye aspect ratio is not below the blink
+		# otherwise, the eye aspect ratio is not below the blinkf
 		# threshold
 		else:
 			# if the eyes were closed for a sufficient number of
@@ -148,7 +251,6 @@ while ret:
 			cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
 		cv2.putText(frame, "EAR: {:.2f}".format(ear), (300, 30),
 			cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
-
  
 	# show the frame
 	cv2.imshow("Frame", frame)
@@ -157,10 +259,7 @@ while ret:
 	# if the `q` key was pressed, break from the loop
 	if key == ord("q"):
 		break
-	if TOTAL>=15:
-		level3.lookAway(detector,predictor,vs)
-		vs = cv2.VideoCapture(0)
-		TOTAL=0
+
 # do a bit of cleanup
 vs.release()
-cv2.destroyAllWindows()
+cv2.destroyAllWindows()  

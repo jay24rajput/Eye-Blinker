@@ -13,6 +13,7 @@ import imutils
 import time
 import dlib
 import cv2
+import subprocess
 
 def eye_aspect_ratio(eye):
 	# compute the euclidean distances between the two sets of
@@ -64,7 +65,7 @@ predictor = dlib.shape_predictor('shape_predictor_68_face_landmarks.dat')
 # right eye, respectively
 (lStart, lEnd) = face_utils.FACIAL_LANDMARKS_IDXS["left_eye"]
 (rStart, rEnd) = face_utils.FACIAL_LANDMARKS_IDXS["right_eye"]
-
+start_time = time.time()
 # start the video stream thread
 print("[INFO] starting video stream thread...")
 vs = cv2.VideoCapture(0)
@@ -90,7 +91,7 @@ while ret:
 
 	# detect faces in the grayscale frame
 	rects = detector(gray, 0)
-
+    
 	# loop over the face detections
 	for rect in rects:
 		# determine the facial landmarks for the face region, then
@@ -118,6 +119,12 @@ while ret:
 
 		# check to see if the eye aspect ratio is below the blink
 		# threshold, and if so, increment the blink frame counter
+		elpased_time = time.time()-start_time
+		elpased_time = round(elpased_time)
+		if elpased_time==20:
+			TOTAL=0
+			subprocess.Popen(['notify-send', "hello world"])
+		
 		if ear < EYE_AR_THRESH:
 			COUNTER += 1
 

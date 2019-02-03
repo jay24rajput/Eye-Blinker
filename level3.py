@@ -9,7 +9,7 @@ import time
 import dlib
 import cv2
 import subprocess
-
+from playsound import playsound
 
 class LookAway:
 	def lookAway(self,detector,predictor,cap):
@@ -42,6 +42,7 @@ class LookAway:
 
 			if round(elpased_time) >=TIME_TO_LOOK_AWAY:
 				#print("congoooooooooooooooooooo")
+				playsound('beep.mp3')
 				break
 
 			print(round(elpased_time))

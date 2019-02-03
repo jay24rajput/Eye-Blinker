@@ -18,14 +18,6 @@ import level3
 import bright
 import generate_report
 
-# elapsed_time_values = set()
-# wow_flag=0
-# wow_flag2=0
-# wow_flag3=0
-# wow_flag4=0
-# problems = [0,0,0,0]
-# blinks=[0,0,0,0]
-# blinksArray=[]s
 def eye_aspect_ratio(eye):
 
 
@@ -112,7 +104,7 @@ def main():
 		ret,frame = vs.read()
 		frame = imutils.resize(frame, width=450)
 		gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY) 
-		cv2.imshow('frame',frame)
+		# cv2.imshow('frame',frame)
 
 		# detect faces in the grayscale frame
 		rects = detector(gray, 0)
@@ -124,7 +116,6 @@ def main():
 			# array
 			shape = predictor(gray, rect)
 			shape = face_utils.shape_to_np(shape)
-			print(shape)
 			# extract the left and right eye coordinates, then use the
 			# coordinates to compute the eye aspect ratio for both eyes
 			leftEye = shape[lStart:lEnd]
